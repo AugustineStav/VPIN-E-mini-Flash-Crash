@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 time = []
 price = []
 volume = []
-#daily number of volume buckets
+#Daily number of volume buckets
 numbuckets = 50
 #SPY has ~100,000,000 daily vol
 V = 100000000/50
 
-#time by minutes from midnight, price, volume
+#Parse time: minutes from midnight, price, volume
 def time_price_vol_data(time, price, volume):
     zipped = gzip.open('SPY2010-04-28.gz', 'r')
     #zipped = open('test_data.txt', 'r')
@@ -31,7 +31,7 @@ def stand_dev(time, volume, price, delta_pi, Vi_list, timebar):
     count = 0
     Vtot = 0
 
-    #count trades for the day    
+    #Count trades for the day  
     while True:
         try: 
             Vtot += volume[count]
@@ -39,7 +39,7 @@ def stand_dev(time, volume, price, delta_pi, Vi_list, timebar):
         except:
             break
 
-    #list of Vi and deltaPi 
+    #List of Vi and deltaPi 
     #1-minute time bars, for example 4:30:00 <= t < 4:31:00   
     count = 0
     while True:
@@ -67,7 +67,7 @@ def stand_dev(time, volume, price, delta_pi, Vi_list, timebar):
             delta_pi.append(price[count] - price1)
             timebar.append(time[count])
             break            
-    #weighted average deltaPi
+    #Weighted average of the deltaPi
     mu = 0
     count = 0
     while True:
@@ -77,7 +77,7 @@ def stand_dev(time, volume, price, delta_pi, Vi_list, timebar):
         except:
             break
     mu = mu/Vtot
-    #calc standard deviation
+    #Calculate the standard deviation in the deltaPi
     sigma = 0
     count = 0
     while True:
@@ -114,7 +114,7 @@ def accumulatedvolume(accumvol, Vi_list):
             break
 
 bucketnum = [] 
-#divide times, price changes, volume into numbered buckets           
+#Divide times, price changes, volume into numbered buckets           
 def volbuckets(Vtot, V, accumvol, timebar, delta_pi, Vi_list, z, bucketnum):
     num = 1
     count = 0
@@ -164,7 +164,7 @@ fintime = []
 agbuy = []
 agsell = []
 
-#calculate the order imbalance for every bucket          
+#Calculate the order imbalance for every bucket     
 def orderimbalance(Vi_list, z, bucketnum, volbuy, volsell, orderimbal_bucketnum, timebar, orderimbal, agbuy, agsell, inittime, fintime):
     count = 0
     while True:
@@ -247,16 +247,6 @@ def time_price_data2(time2, price2):
 def graph(vpin_fintime, vpin, time2, price2):
     xlabels = []
     xmarks = []
-    """
-    for time in vpin_fintime:
-        hour = str(int(time/60))
-        minutenum = int(time%60)
-        if minutenum < 10:
-            minute = '0' + str(minutenum)
-        else:
-            minute = str(minutenum)
-        xlabels.append(hour+':'+minute)
-    """
     count = 0
     time = 60*(int(vpin_fintime[0]/60))
     while time <= vpin_fintime[len(vpin_fintime)-1]:
@@ -296,10 +286,6 @@ Vsig = stand_dev(time, volume, price, delta_pi, Vi_list, timebar)
 Vtot = Vsig[0]
 stDev = Vsig[1]  
 findZ(z, stDev, delta_pi)
-
-#print timebar      
-#print delta_pi
-#print Vi_list
 
 accumulatedvolume(accumvol, Vi_list)
 volbuckets(Vtot, V, accumvol, timebar, delta_pi, Vi_list, z, bucketnum)
